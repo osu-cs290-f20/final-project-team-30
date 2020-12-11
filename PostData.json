@@ -1,0 +1,37 @@
+[
+  {
+    "length": "5 Km",
+    "type": "Foot Trail",
+    "difficulty": "Intermediate",
+    "title": "Hike 1",
+    "photoURL": "https://wisdom-trek.com/wp-content/uploads/2016/05/dnxb-dongnanxibei-angels-landing-switchback-hike-trail-difficult-utah-zion-national-park-1.jpg"
+  },
+  {
+    "length": "8 Km",
+    "type": "Foot Trail",
+    "difficulty": "Veteran",
+    "title": "Hike 2",
+    "photoURL": "http://www.beerbikesandcampfires.com/wp-content/uploads/2020/03/DSC08994-738x355.jpg"
+  },
+  {
+    "length": "12 km",
+    "type": "Nature Trails",
+    "difficulty": "Veteran",
+    "title": "Hike 3",
+    "photoURL": "https://outwardon.com/wp-content/uploads/2015/11/shutterstock_91769831-805x537.jpg"
+  },
+  {
+    "length": "6 Km",
+    "type": "Boardwalks",
+    "difficulty": "Intermediate",
+    "title": "Hike 6",
+    "photoURL": "https://newengland.com/wp-content/uploads/2014/10/1a.jpg"
+  },
+  {
+    "length": "40 Km",
+    "type": "Without Trail",
+    "difficulty": "Amateur",
+    "title": "Hike 5",
+    "photoURL": "https://www.cabinsusagatlinburg.com/images/area-info/hardest-hiking-trails-in-the-smokies.jpg"
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "name": "final-project-team-30",
+  "version": "1.0.0",
+  "description": "Final Project CS 290",
+  "main": "server.js",
+  "scripts": {
+    "build": "handlebars Views/pageTemplate.handlebars -f Public/pageTemplate.js",
+    "dev": "nodemon server.js",
+    "predev": "npm run build",
+    "prestart": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osu-cs290-f20/final-project-team-30.git"
+  },
+  "keywords": [
+    "CSS",
+    "HTML",
+    "Javascript",
+    "Node.js"
+  ],
+  "author": "Jawad Alamgir",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/osu-cs290-f20/final-project-team-30/issues"
+  },
+  "homepage": "https://github.com/osu-cs290-f20/final-project-team-30#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "handlebars": "^4.7.6",
+    "nodemon": "^2.0.6"
+  }
+}
