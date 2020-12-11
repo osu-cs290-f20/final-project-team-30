@@ -38,7 +38,7 @@ app.post('/addHike', function(req, res, next){
     });
     //console.log("  ==  Data for ", req.body.title, ":", postData);
     console.log(" == Beginning File Write  ==  ");
-    fs.writeFileSync("/PostData.json", JSON.stringify(postData, null, 2), function(err, data){
+    fs.writeFileSync("PostData.json", JSON.stringify(postData, null, 2), function(err, data){
       if(err){
         console.log("  ==  REACHED ERROR!!!  ==  ");
         console.log("  ==  err:", err);
