@@ -24,8 +24,22 @@ var FilterMaxPrice = document.getElementById('filter-max-length');
 var FilterCity = document.getElementById('filter-type');
 var FilterUpdateButton = document.getElementById('filter-update-button');
 var ConditionFieldset = document.getElementById('filter-difficulty');
+var PostTitle = document.querySelectorAll('.post-title');
+console.log("  == Post Title: ", PostTitle);
+
+function postTitleActionFunc(event){
+  //var num  = i;
+  var temp = event.target.textContent;
+  console.log(" == value of temp: ", temp);
+  console.log(" == function responsding on click == ");
+  window.location = 'https://localhost:3000/posts/:' + temp +'/';
+}
 
 //Listeners
+for(i =0; i< PostTitle.length; i++){
+  PostTitle[i].addEventListener('click', postTitleActionFunc);
+}
+
 SellButton.addEventListener('click', SellButtonFunc);
 ModalCloseButton.addEventListener('click', SellButtonFunc);
 ModalCancelButton.addEventListener('click', SellButtonFunc);

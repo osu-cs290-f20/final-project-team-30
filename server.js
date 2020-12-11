@@ -58,7 +58,20 @@ app.post('/addHike', function(req, res, next){
 
 });
 
-app.get('/posts/:PostNum', function(req, res, next){
+app.get('/posts/:postName/', function(req, res, next){
+  console.log("  ==  PostData[0]:", postData);
+  var name = req.params.postName;
+  var num;
+  for(i =0; i < postDataLength;i++){
+    if (postData[i].name == name){
+      num = i;
+    }
+    var singlepost = postData[num];
+    res.status(200).render('pageTemplate', {posts:[singlepost], show:false});
+  }
+})
+
+app.get('/:PostNum', function(req, res, next){
   var num = req.params.PostNum.slice(1);
   //console.log(" == num is of type:", typeof(num))
   number = parseInt(num, 10);
@@ -69,7 +82,7 @@ app.get('/posts/:PostNum', function(req, res, next){
   //console.log("  ==  Json passes:", singlepost);
   if(postData[num] != undefined){
     //console.log("  ==  Reached POST if  ==  ");
-    res.status(200).render('pageTemplate', {posts:[singlepost]});
+    res.status(200).render('pageTemplate', {posts:[singlepost], show:false});
   }else{
     //console.log("  ==  Reached POST else  ==  ");
     next();
@@ -78,6 +91,10 @@ app.get('/posts/:PostNum', function(req, res, next){
 
 
 app.get('*', function (req, res) {
+  res.status(404).render('404Template');
+});
+
+app.get('/posts/*', function (req, res) {
   res.status(404).render('404Template');
 });
 
