@@ -1,439 +1,251 @@
 /*
- * Write your JS code in this file.  Make sure to add your name and
- * @oregonstate.edu email address below.
+ * Write your client-side JS code in this file.  Don't forget to include your
+ * name and @oregonstate.edu email address below.
  *
  * Name: Jawad Alamgir
  * Email: alamgirj@oregonstate.edu
  */
 
-/*
- * You must update this function to use your Handlebars post template to
- * generate HTML representing a single post, given the description, photo URL,
- * price, city, and condition of the item to be sold as arguments to the
- * function.  The generated HTML should then be inserted into the DOM at the
- * end of the <section> element whose id is "posts".
- *
- * The function currently uses native JS methods to generate a new DOM element
- * representing single post, given the specified information, and inserts that
- * post into the DOM.  The new post element has the following structure:
- *
- * <div class="post" data-price="<PRICE>" data-city="<CITY>" data-condition="<CONDITION>">
- *   <div class="post-contents">
- *     <div class="post-image-container">
- *       <img src="<PHOTO_URL>" alt="<ITEM_DESCRIPTION>">
- *     </div>
- *     <div class="post-info-container">
- *       <a href="#" class="post-title"><ITEM_DESCRIPTION></a> <span class="post-price">$<PRICE></span> <span class="post-city">(<CITY>)</span>
- *     </div>
- *   </div>
- * </div>
- */
-function insertNewPost(description, photoURL, price, city, condition) {
-  var context = {
-    postTitle: description,
-    postPrice: price,
-    url: photoURL,
-    postCondition: condition,
-    postCity: city
-  };
-  console.log(" == undefined is: ", Handlebars.templates);
-  var postTemplateHTML = Handlebars.templates.pageTemplate(context);
-  var postsSection = document.getElementById('posts');
-  console.log("  ==  HTML Template: ", postTemplateHTML);
-  //postsSection.appendChild(postDiv);
-  postsSection.insertAdjacentHTML('beforeend' ,postTemplateHTML);
+//Variables to get elements
+var SellButton = document.getElementById("add-hike-button");
+var SellModal = document.getElementById("add-hike-modal");
+var SellModalBackdrop = document.getElementById("modal-backdrop");
+var ModalCloseButton = document.getElementById("modal-close");
+//var ModalDialogue = document.getElementsByClassName("modal-dialog");
+var Input = document.getElementsByTagName("input");
+var ModalCancelButton = document.getElementById("modal-cancel");
+var ModalAcceptButton = document.getElementById("modal-accept");
+var ModalTextBox = document.getElementById("post-name-input");
+var PostContainer = document.getElementById("posts");
+var PostFieldset = document.getElementById("post-difficulty-fieldset");
+var FilterText = document.getElementById('filter-name');
+var FilterMinPrice = document.getElementById('filter-min-length');
+var FilterMaxPrice = document.getElementById('filter-max-length');
+var FilterCity = document.getElementById('filter-type');
+var FilterUpdateButton = document.getElementById('filter-update-button');
+var ConditionFieldset = document.getElementById('filter-difficulty');
 
-  // // // Create the containing <div> element.
-  // var postDiv = document.createElement('div');
-  // postDiv.classList.add('post');
-  // postDiv.setAttribute('data-price', price);
-  // postDiv.setAttribute('data-city', city);
-  // postDiv.setAttribute('data-condition', condition);
-  //
-  // // // Create the inner post-contents <div> and add it to the post <div>.
-  // var postContentsDiv = document.createElement('div');
-  // postContentsDiv.classList.add('post-contents');
-  // postDiv.appendChild(postContentsDiv);
-  //
-  // // /*
-  // //  * Create the post-image-container <div> and its <img> contents and add
-  // //  * them into the post-contents <div>.
-  // //  */
-  // var postImageContainerDiv = document.createElement('div');
-  // postImageContainerDiv.classList.add('post-image-container');
-  // postContentsDiv.appendChild(postImageContainerDiv);
-  //
-  // var postImg = document.createElement('img');
-  // postImg.src = photoURL;
-  // postImg.alt = description;
-  // postImageContainerDiv.appendChild(postImg);
-  //
-  // // /*
-  // //  * Create the post-info-container <div> and all of its contents and add
-  // //  * them into the post-contents <div>.
-  // //  */
-  // var postInfoContainerDiv = document.createElement('div');
-  // postInfoContainerDiv.classList.add('post-info-container');
-  // postContentsDiv.appendChild(postInfoContainerDiv);
-  //
-  // var postLink = document.createElement('a');
-  // postLink.classList.add('post-title');
-  // postLink.href = '#';
-  // postLink.textContent = description;
-  // postInfoContainerDiv.appendChild(postLink);
-  //
-  // var spaceText1 = document.createTextNode(' ');
-  // postInfoContainerDiv.appendChild(spaceText1);
-  //
-  // var postPriceSpan = document.createElement('span');
-  // postPriceSpan.classList.add('post-price');
-  // postPriceSpan.textContent = '$' + price;
-  // postInfoContainerDiv.appendChild(postPriceSpan);
-  //
-  // var spaceText2 = document.createTextNode(' ');
-  // postInfoContainerDiv.appendChild(spaceText2);
-  //
-  // var postCitySpan = document.createElement('span');
-  // postCitySpan.classList.add('post-city');
-  // postCitySpan.textContent = '(' + city + ')';
-  // postInfoContainerDiv.appendChild(postCitySpan);
-  //
-  // /*
-  //  * Add the new post element into the DOM at the end of the posts <section>.
-  //  */
-  //  //var postTemplateHTML = Handlebars.templates.postTemplate(context);
-  //  var postsSection = document.getElementById('posts');
-  //  postsSection.appendChild(postDiv);
+//Listeners
+SellButton.addEventListener('click', SellButtonFunc);
+ModalCloseButton.addEventListener('click', SellButtonFunc);
+ModalCancelButton.addEventListener('click', SellButtonFunc);
+ModalAcceptButton.addEventListener('click', CreatePost);
+FilterUpdateButton.addEventListener('click', FilterPosts)
+
+var ConditionValue;
+ConditionFieldset.addEventListener('click', function(event){
+  // console.log(" -- Fieldset click:", event.target);
+  // console.log(" -- Attribute ID:", event.target.value);
+  // event.stopPropagation();
+  ConditionValue = event.target.value;
+})
+
+//function executes all functionality for post filtering fulfilling second part of the assignment
+function FilterPosts(event){
+  var TextUserInput = FilterText.value;
+  TextUserInput = TextUserInput.toLowerCase();
+  var MinInput = FilterMinPrice.value;
+  var MaxInput = FilterMaxPrice.value;
+  var FilterCondition = [];
+  //console.log(" -- Condition Fieldset:", ConditionFieldset.children[1].children[0].checked);
+  for(i=0; i< 5; i++){
+    if(ConditionFieldset.children[1+i].children[0].checked){
+        FilterCondition.push(ConditionFieldset.children[1+i].children[0].getAttribute('value'));
+    }
+  }
+  //console.log(" -- Filter Condition:", FilterCondition);
+  //console.log(" -- City Selected options:", FilterCity.selectedOptions[0]);
+  for(i = 0; i < 7; i++){
+    var CityInput = FilterCity.selectedOptions[i];  //selectedOptions Doesn't work on internet explorer apparently
+    if(CityInput){
+      break;
+    }
+  }
+  //console.log(" -- City Input:" , CityInput);
+  //console.log(" -- Child Attribute:", PostContainer.children[0].getAttribute("data-price"));
+  //console.log(" -- Post Container Length:", PostContainer.childElementCount);
+  for(i = 0; i < PostContainer.childElementCount;i++){
+    var Price = PostContainer.children[i].getAttribute("data-length");
+    Price = parseInt(Price, 10);
+    var PostText = PostContainer.children[i].children[0].children[1].children[0].textContent;
+    PostText = PostText.toLowerCase();
+    var PostCity = PostContainer.children[i].getAttribute("data-type");
+    var PostCondition = PostContainer.children[i].getAttribute("data-difficulty");
+
+    if(TextUserInput != ""){
+      if(PostText.includes(TextUserInput) == false){
+        //console.log(" -- User Text Input: ", TextUserInput);
+        //console.log(" -- Text Input Reached --");
+        PostContainer.children[i].classList.add("hidden");
+      }
+    }
+
+    if(MinInput != ""){
+      if(Price < MinInput){
+        //console.log(" -- Min Input Reached --");
+        PostContainer.children[i].classList.add("hidden");
+      }
+    }
+
+    if(MaxInput != ""){
+      if(Price > MaxInput){
+        //console.log(" -- Max Input Reached --");
+        PostContainer.children[i].classList.add("hidden");
+      }
+    }
+
+    if(CityInput.value != ""){
+      if(CityInput.value != 'Any' && PostCity  != CityInput.value){
+        //console.log(" -- City Input Reached --");
+        //console.log(" -- City Input: ", CityInput.value);
+        PostContainer.children[i].classList.add("hidden");
+      }
+    }
+
+    if(FilterCondition != ""){
+      if (PostCondition.includes(FilterCondition) == false){
+        //console.log(" -- Condition Input Reached --");
+        //console.log(" -- Condition Input: ", FilterCondition);
+        PostContainer.children[i].classList.add("hidden");
+      }
+    }
+    //console.log(" -- Post text content:", PostContainer.children[i].children[0].children[1].children[0].textContent);
+  }
+  // console.log(" -- Text User Input:", TextUserInput);
+  // console.log(" -- Minimum Price:", MinInput);
+  // console.log(" -- Maximum Price:", MaxInput);
+  // console.log(" -- Selected City:", CityInput);
 
 }
 
-
-/***************************************************************************
- **
- ** You should not modify any of the functions below.
- **
- ***************************************************************************/
-
-/*
- * These arrays hold the collection of all post objects and the list of all
- * cities that have been used in posts.
- */
-var allPosts = [];
-var allCities = [];
-
-/*
- * This function checks whether all of the required inputs were supplied by
- * the user and, if so,i nserting a new post into the page constructed using
- * these inputs.  If the user did not supply a required input, they instead
- * recieve an alert, and no new post is inserted.
- */
-function handleModalAcceptClick() {
-
+//Creates new posts fulfilling rquiremnt 3 and 4
+function CreatePost(event){
+  for(i = 8; i < 12; i++){
+    //console.log(" -- Input value is:", Input[i].value);
+    //console.log(" -- Loop Number:", i);
+    if(Input[i].value.length == 0){
+      alert("-- Missing Information --");
+      return;
+    }
+  }
   var name = document.getElementById('post-name-input').value.trim();
   var photoURL = document.getElementById('post-photo-input').value.trim();
   var length = document.getElementById('post-length-input').value.trim();
   var type = document.getElementById('post-type-input').value.trim();
-  var difficulty = document.querySelector('#post-difficulty-fieldset input:checked').value;
+  //var fieldset = document.querySelectorAll('#post-difficulty-fieldset input');
+  var difficulty = document.querySelector("#post-difficulty-fieldset input").checked;
 
-  if (!name || !photoURL || !length || !type || !difficulty) {
-    alert("You must fill in all of the fields!");
-  } else {
-
-    allPosts.push({
-      description: name,
-      photoURL: photoURL,
-      price: length,
-      city: type,
-      condition: difficulty
-    });
-
-    clearFiltersAndReinsertPosts();
-
-    addCityToAllCities(city);
-
-    hideSellSomethingModal();
-
+  if(document.getElementById('post-difficulty-beginner').checked){
+    difficulty = 'beginner';
+  }
+  if(document.getElementById('post-difficulty-amateur').checked){
+    difficulty = 'amateur';
+  }
+  if(document.getElementById('post-difficulty-intermediate').checked){
+    difficulty = 'intermediate';
+  }
+  if(document.getElementById('post-difficulty-experienced').checked){
+    difficulty = 'experienced';
+  }
+  if(document.getElementById('post-difficulty-veteran').checked){
+    difficulty = 'veteran';
   }
 
-}
+  var postRequest = new XMLHttpRequest();
+  var reqURL = '/addHike';
+  postRequest.open('POST', reqURL);
 
+  console.log(" == Values passed to stringify: ", difficulty);
 
-/*
- * This function clears all filter values, causing all posts to be re-inserted
- * into the DOM.
- */
-function clearFiltersAndReinsertPosts() {
-
-  document.getElementById('filter-name').value = "";
-  document.getElementById('filter-min-length').value = "";
-  document.getElementById('filter-max-length').value = "";
-  document.getElementById('filter-type').value = "";
-
-  var filterConditionCheckedInputs = document.querySelectorAll("#filter-difficulty input");
-  for (var i = 0; i < filterConditionCheckedInputs.length; i++) {
-    filterConditionCheckedInputs[i].checked = false;
-  }
-
-  doFilterUpdate();
-
-}
-
-
-/*
- * This function checks to see if a city is included in the collection of all
- * cities for which we have a post.  If it's not, the new city is added to the
- * collection.
- */
-function addCityToAllCities(city) {
-
-  /*
-   * If city doesn't already exist in the list of cities by which we can
-   * filter, add it.
-   */
-  if (allCities.indexOf(city.toLowerCase()) === -1) {
-    allCities.push(city.toLowerCase());
-    var newCityOption = createCityOption(city);
-    var filterCitySelect = document.getElementById('filter-type');
-    filterCitySelect.appendChild(newCityOption);
-  }
-
-}
-
-
-/*
- * This function shows the "sell something" modal by removing the "hidden"
- * class from the modal and backdrop.
- */
-function showSellSomethingModal() {
-
-  var showSomethingModal = document.getElementById('add-hike-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
-
-  showSomethingModal.classList.remove('hidden');
-  modalBackdrop.classList.remove('hidden');
-
-}
-
-
-/*
- * This function clears any user-entered inputs in the "sell something" modal.
- */
-function clearSellSomethingModalInputs() {
-
-  var postTextInputElements = [
-    document.getElementById('post-name-input'),
-    document.getElementById('post-photo-input'),
-    document.getElementById('post-length-input'),
-    document.getElementById('post-type-input')
-  ];
-
-  /*
-   * Clear any text entered in the text inputs.
-   */
-  postTextInputElements.forEach(function (inputElem) {
-    inputElem.value = '';
+  var reqBody = JSON.stringify({
+    length: length,
+    type: type,
+    difficulty: difficulty,
+    title: name,
+    photoURL: photoURL
   });
+  console.log("  ==  RequestBody: ", reqBody);
 
-  /*
-   * Grab the originally checked radio button and make sure it's checked.
-   */
-  var checkedPostConditionButton = document.querySelector('#post-difficulty-fieldset input[checked]');
-  checkedPostConditionButton.checked = true;
+
+
+  postRequest.setRequestHeader('Content-Type', 'application/json');
+  postRequest.send(reqBody);
+
+    var Condition;
+
+    if(document.getElementById('post-difficulty-beginner').checked == true){
+      Condition = 'beginner';
+    }
+    if(document.getElementById('post-difficulty-amateur').checked == true){
+      Condition = 'amateur';
+    }
+    if(document.getElementById('post-difficulty-intermediate').checked == true){
+      Condition = 'intermediate';
+    }
+    if(document.getElementById('post-difficulty-experienced').checked == true){
+      Condition = 'experienced';
+    }
+    if(document.getElementById('post-difficulty-veteran').checked == true){
+      Condition = 'veteran';
+    }
+
+    var PostCityDiv = document.createElement('div');
+    PostCityDiv.classList.add('post');
+    PostCityDiv.setAttribute('data-length', Input[10].value);
+    PostCityDiv.setAttribute('data-type', Input[11].value);
+    PostCityDiv.setAttribute('data-difficulty', Condition);
+
+    var PostContentDiv = document.createElement('div');
+    PostContentDiv.classList.add('post-contents');
+
+    var PostImageDiv = document.createElement('div');
+    PostImageDiv.classList.add('post-image-container');
+
+    var PostIMG = document.createElement('img');
+    PostIMG.setAttribute('src',  Input[9].value);
+    PostIMG.setAttribute('alt',  'User Provided URL');
+
+    var PostInfoDiv = document.createElement('div');
+    PostInfoDiv.classList.add('post-info-container');
+
+    var PostInfoa = document.createElement('a');
+    PostInfoa.classList.add('post-title');
+    PostInfoa.setAttribute('href', '#');
+    PostInfoa.textContent = Input[8].value;
+
+    var PostCitySpan = document.createElement('span');
+    PostCitySpan.classList.add('post-type');
+    PostCitySpan.textContent = '(' + Input[11].value + ')';
+
+    var PostPriceSpan = document.createElement('span');
+    PostPriceSpan.classList.add('post-length')
+    PostPriceSpan.textContent = Input[10].value;
+
+    PostContainer.appendChild(PostCityDiv);
+    PostCityDiv.appendChild(PostContentDiv);
+    PostContentDiv.appendChild(PostImageDiv);
+    PostImageDiv.appendChild(PostIMG);
+    PostContentDiv.appendChild(PostInfoDiv);
+    PostInfoDiv.appendChild(PostInfoa);
+    PostInfoDiv.appendChild(PostPriceSpan, PostInfoa);
+    PostInfoDiv.appendChild(PostCitySpan,PostInfoa);
+
+    SellButtonFunc(event);
 
 }
 
-
-/*
- * This function hides the "sell something" modal by adding the "hidden"
- * class from the modal and backdrop.  It also clears any existing inputs in
- * the modal's input fields when the modal is hidden.
- */
-function hideSellSomethingModal() {
-
-  var showSomethingModal = document.getElementById('add-hike-modal');
-  var modalBackdrop = document.getElementById('modal-backdrop');
-
-  showSomethingModal.classList.add('hidden');
-  modalBackdrop.classList.add('hidden');
-
-  clearSellSomethingModalInputs();
+//Display model and close it as well as clear text fields requirement 1 & 2
+function SellButtonFunc(event){
+  //console.log("== Sell Button Was Clicked ==");
+  //console.log(" -- event:", event);
+  //console.log(" -- event.target:", event.target);
+  //console.log(" -- eventcurrentTarget:", event.currentTarget);
+  //console.log(" -- PopUp:", PopUp);
+  var PopUp = event.target.nextElementSibling;
+  SellModal.classList.toggle("hidden");
+  SellModalBackdrop.classList.toggle("hidden");
+  for(i = 0; i < Input.length; i++){
+    Input[i].value = "";
+  }
 
 }
-
-
-/*
- * This function creates a new <option> element containing a given city name.
- */
-function createCityOption(city) {
-  var newCityOption = document.createElement('option');
-  newCityOption.textContent = city;
-  return newCityOption;
-}
-
-
-/*
- * A function to apply the current filters to a specific post.  Returns true
- * if the post passes the filters and should be displayed and false otherwise.
- */
-function postPassesFilters(post, filters) {
-
-  if (filters.text) {
-    var postDescription = post.description.toLowerCase();
-    var filterText = filters.text.toLowerCase();
-    if (postDescription.indexOf(filterText) === -1) {
-      return false;
-    }
-  }
-
-  if (filters.minPrice) {
-    var filterMinPrice = Number(filters.minPrice);
-    if (Number(post.price) < filterMinPrice) {
-      return false;
-    }
-  }
-
-  if (filters.maxPrice) {
-    var filterMaxPrice = Number(filters.maxPrice);
-    if (Number(post.price) > filterMaxPrice) {
-      return false;
-    }
-  }
-
-  if (filters.city) {
-    if (post.city.toLowerCase() !== filters.city.toLowerCase()) {
-      return false;
-    }
-  }
-
-  if (filters.conditions && filters.conditions.length > 0) {
-    if (filters.conditions.indexOf(post.condition) === -1) {
-      return false;
-    }
-  }
-
-  return true;
-
-}
-
-
-/*
- * Applies the filters currently entered by the user to the set of all posts.
- * Any post that satisfies the user's filter values will be displayed,
- * including posts that are not currently being displayed because they didn't
- * satisfy an old set of filters.  Posts that don't satisfy the filters are
- * removed from the DOM.
- */
-function doFilterUpdate() {
-
-  /*
-   * Grab values of filters from user inputs.
-   */
-  var filters = {
-    text: document.getElementById('filter-name').value.trim(),
-    minPrice: document.getElementById('filter-min-length').value,
-    maxPrice: document.getElementById('filter-max-length').value,
-    city: document.getElementById('filter-type').value.trim(),
-    conditions: []
-  }
-
-  var filterConditionCheckedInputs = document.querySelectorAll("#filter-difficulty input:checked");
-  for (var i = 0; i < filterConditionCheckedInputs.length; i++) {
-    filters.conditions.push(filterConditionCheckedInputs[i].value);
-  }
-
-  /*
-   * Remove all "post" elements from the DOM.
-   */
-  var postContainer = document.getElementById('posts');
-  while(postContainer.lastChild) {
-    postContainer.removeChild(postContainer.lastChild);
-  }
-
-  /*
-   * Loop through the collection of all "post" elements and re-insert ones
-   * that meet the current filtering criteria.
-   */
-  allPosts.forEach(function (post) {
-    if (postPassesFilters(post, filters)) {
-      insertNewPost(post.description, post.photoURL, post.price, post.city, post.condition);
-    }
-  });
-
-}
-
-
-/*
- * This function parses an existing DOM element representing a single post
- * into an object representing that post and returns that object.  The object
- * is structured like this:
- *
- * {
- *   description: "...",
- *   photoURL: "...",
- *   price: ...,
- *   city: "...",
- *   condition: "..."
- * }
- */
-function parsePostElem(postElem) {
-
-  var post = {
-    price: postElem.getAttribute('data-length'),
-    city: postElem.getAttribute('data-type'),
-    condition: postElem.getAttribute('data-difficulty')
-  };
-
-  var postImageElem = postElem.querySelector('.post-image-container img');
-  post.photoURL = postImageElem.src;
-  post.description = postImageElem.alt;
-
-  return post;
-
-}
-
-
-/*
- * Wait until the DOM content is loaded, and then hook up UI interactions, etc.
- */
-window.addEventListener('DOMContentLoaded', function () {
-
-  /*
-   * Remember all of the initial post elements initially displayed in the page.
-   */
-  var postElems = document.getElementsByClassName('post');
-  for (var i = 0; i < postElems.length; i++) {
-    allPosts.push(parsePostElem(postElems[i]));
-  }
-
-  /*
-   * Grab all of the city names already in the filter dropdown.
-   */
-  var filterCitySelect = document.getElementById('filter-type');
-  if (filterCitySelect) {
-    var filterCityOptions = filterCitySelect.querySelectorAll('option:not([selected])');
-    for (var i = 0; i < filterCityOptions.length; i++) {
-      allCities.push(filterCityOptions[i].value.trim().toLowerCase());
-    }
-  }
-
-  var sellSomethingButton = document.getElementById('add-hike-button');
-  if (sellSomethingButton) {
-    sellSomethingButton.addEventListener('click', showSellSomethingModal);
-  }
-
-  var modalAcceptButton = document.getElementById('modal-accept');
-  if (modalAcceptButton) {
-    modalAcceptButton.addEventListener('click', handleModalAcceptClick);
-  }
-
-  var modalHideButtons = document.getElementsByClassName('modal-hide-button');
-  for (var i = 0; i < modalHideButtons.length; i++) {
-    modalHideButtons[i].addEventListener('click', hideSellSomethingModal);
-  }
-
-  var filterUpdateButton = document.getElementById('filter-update-button');
-  if (filterUpdateButton) {
-    filterUpdateButton.addEventListener('click', doFilterUpdate)
-  }
-
-});

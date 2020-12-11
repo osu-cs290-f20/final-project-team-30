@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var Handlebars = require('handlebars');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var app = express();
@@ -27,22 +28,25 @@ app.get('/', function(req, res, next){
 
 app.post('/addHike', function(req, res, next){
   console.log("  ==  req.body: ",req.body);
-  if(req.body && req.body.difficulty && req.body.type && req.body.name && req.body.length && req.body.photoURL){
+  if(req.body && req.body.difficulty && req.body.type && req.body.title && req.body.length && req.body.photoURL){
     postData.push({
-      "length": req.body.length,
-      "type": req.body.type,
-      "difficulty": req.body.difficulty,
-      "title": req.body.name,
-      "photoURL": req.body.photoURL
+      length: req.body.length,
+      type: req.body.type,
+      difficulty: req.body.difficulty,
+      title: req.body.title,
+      photoURL: req.body.photoURL
     });
-    console.log("  ==  Data for ", req.body.name, ":", postData);
-
-    fs.writeFile("/PostData.json", JSON.stringify(postData, null, 2), function(err, data){
+    //console.log("  ==  Data for ", req.body.title, ":", postData);
+    console.log(" == Beginning File Write  ==  ");
+    fs.writeFileSync("/PostData.json", JSON.stringify(postData, null, 2), function(err, data){
       if(err){
+        console.log("  ==  REACHED ERROR!!!  ==  ");
         console.log("  ==  err:", err);
-        res.ststus(200).send("Error saving photo in database");
+        res.status(200).send("Error saving photo in database");
       }
+      console.log(" == No Error :)  ==  ");
     });
+    console.log(" == Ending File Write  ==  ");
 
     res.status(200).send("Data successfully sent");
 
