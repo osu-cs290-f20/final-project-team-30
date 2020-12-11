@@ -223,7 +223,7 @@ header a {
   min-width: 350px;
   min-height: 300px;
   margin: 40px auto;
-  background-color: #fff;
+  background-color: #f67811;
   border-radius: 15px;
 }
 
@@ -235,6 +235,11 @@ header a {
 .modal-header h3 {
   margin: 0;
   font-size: 28px;
+}
+
+i.fas.fa-plus{
+  color: #9c0b0b;
+  border-color: #f67811;
 }
 
 #modal-close {
@@ -263,6 +268,8 @@ header a {
   font-weight: 600;
   flex: 1 75px;
   margin-right: 10px;
+  color: #000;
+  border-color: #9c0b0b;
 }
 
 .post-input-element input {
@@ -270,6 +277,7 @@ header a {
   padding: 8px;
   font-size: 20px;
   border: 1px solid #aaa;
+  background-color: #f59649;
 }
 
 .post-fieldset {
@@ -286,15 +294,17 @@ header a {
 #modal-cancel,
 #modal-accept {
   margin-right: 20px;
+  color: #000;
+  background-color: #9c0b0b;
 }
 
 #modal-cancel {
-  color: #333;
-  background-color: #fff;
+  color: #000;
+  background-color: #9c0b0b;
 }
 
-#modal-cancel:hover {
-  background-color: #eee;
+#modal-cancel:hover, #modal-accept:hover {
+  background-color: #ca3737;
 }
 
 /*
